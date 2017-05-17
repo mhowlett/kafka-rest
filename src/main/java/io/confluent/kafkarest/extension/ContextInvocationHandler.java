@@ -28,11 +28,7 @@ public class ContextInvocationHandler implements InvocationHandler {
   }
 
   private KafkaRestContext getContext() {
-    if (KafkaRestContextProvider.getCurrentContext() != null) {
-      return KafkaRestContextProvider.getCurrentContext();
-    } else {
-      return KafkaRestContextProvider.getDefaultContext();
-    }
+    return KafkaRestContextProvider.getContext();
   }
 
   @Override

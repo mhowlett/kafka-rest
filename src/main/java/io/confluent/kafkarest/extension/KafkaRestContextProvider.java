@@ -86,7 +86,15 @@ public class KafkaRestContextProvider {
     }
   }
 
-  public static KafkaRestContext getDefaultContext() {
+  public static KafkaRestContext getContext() {
+    if (getCurrentContext() != null) {
+      return getCurrentContext();
+    } else {
+      return getDefaultContext();
+    }
+  }
+
+  private static KafkaRestContext getDefaultContext() {
     return context;
   }
 
@@ -98,7 +106,7 @@ public class KafkaRestContextProvider {
     return defaultAppConfig;
   }
 
-  public static KafkaRestContext getCurrentContext() {
+  private static KafkaRestContext getCurrentContext() {
     return restContextInheritableThreadLocal.get();
   }
 

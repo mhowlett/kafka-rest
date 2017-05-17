@@ -44,7 +44,7 @@ public class KafkaRestApplication extends Application<KafkaRestConfig> {
   RestResourceExtension restResourceExtension;
 
   public KafkaRestApplication(KafkaRestConfig config)
-      throws IllegalAccessException, InstantiationException, RestConfigException {
+      throws RestConfigException {
     super(config);
 
     this.restResourceExtension = null;
@@ -58,7 +58,7 @@ public class KafkaRestApplication extends Application<KafkaRestConfig> {
             restResourceExtensionClass =
             (Class<RestResourceExtension>) Class.forName(extensionClassName);
         this.restResourceExtension = restResourceExtensionClass.newInstance();
-      } catch (ClassNotFoundException e) {
+      } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
         throw new RestConfigException(
             "Unable to load resource extension class '"
             + extensionClassName
