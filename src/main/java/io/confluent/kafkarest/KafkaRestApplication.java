@@ -16,8 +16,9 @@
 
 package io.confluent.kafkarest;
 
+import org.eclipse.jetty.util.StringUtil;
+
 import java.lang.reflect.Proxy;
-import java.util.Properties;
 
 import javax.ws.rs.core.Configurable;
 
@@ -44,22 +45,32 @@ public class KafkaRestApplication extends Application<KafkaRestConfig> {
 
   RestResourceExtension restResourceExtension;
 
-  public KafkaRestApplication() throws RestConfigException {
-    this(new Properties());
-  }
-
-  public KafkaRestApplication(Properties props) throws RestConfigException {
-    super(new KafkaRestConfig(props));
-  }
-
-  public KafkaRestApplication(KafkaRestConfig config) {
+  public KafkaRestApplication(KafkaRestConfig config)
+      throws IllegalAccessException, InstantiationException, RestConfigException {
     super(config);
-  }
 
-  public KafkaRestApplication(KafkaRestConfig config, RestResourceExtension restResourceExtension)
-      throws IllegalAccessException, InstantiationException {
-    super(config);
-    this.restResourceExtension = restResourceExtension;
+    this.restResourceExtension = null;
+
+    String extensionClassName = config.getString(KafkaRestConfig
+                                                     .KAFKA_REST_RESOURCE_EXTENSION_CONFIG);
+
+    if (StringUtil.isNotBlank(extensionClassName)) {
+      try {
+        Class<RestResourceExtension>
+            restResourceExtensionClass =
+            (Class<RestResourceExtension>) Class.forName(extensionClassName);
+
+        this.restResourceExtension = restResourceExtensionClass.newInstance();
+      }
+      catch (ClassNotFoundException e)
+      {
+        throw new RestConfigException(
+            "Unable to load resource extension class '"
+            + extensionClassName
+            + "'. Check your classpath and that the configured class implements the "
+            + "RestResourceExtension interface.");
+      }
+    }
   }
 
   @Override
