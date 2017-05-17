@@ -1,17 +1,15 @@
 /**
  * Copyright 2015 Confluent Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  **/
 
 package io.confluent.kafkarest;
@@ -59,11 +57,8 @@ public class KafkaRestApplication extends Application<KafkaRestConfig> {
         Class<RestResourceExtension>
             restResourceExtensionClass =
             (Class<RestResourceExtension>) Class.forName(extensionClassName);
-
         this.restResourceExtension = restResourceExtensionClass.newInstance();
-      }
-      catch (ClassNotFoundException e)
-      {
+      } catch (ClassNotFoundException e) {
         throw new RestConfigException(
             "Unable to load resource extension class '"
             + extensionClassName
@@ -93,14 +88,17 @@ public class KafkaRestApplication extends Application<KafkaRestConfig> {
   ) {
     config.register(new ZkExceptionMapper(appConfig));
 
-    KafkaRestContextProvider.initializeDefaultContext(zkUtils, appConfig, mdObserver, producerPool,
-                                                      consumerManager, simpleConsumerFactory,
-                                                      simpleConsumerManager, kafkaConsumerManager);
+    KafkaRestContextProvider.initialize(
+        zkUtils, appConfig, mdObserver, producerPool,
+        consumerManager, simpleConsumerFactory,
+        simpleConsumerManager, kafkaConsumerManager
+    );
     ContextInvocationHandler contextInvocationHandler = new ContextInvocationHandler();
     KafkaRestContext context =
         (KafkaRestContext) Proxy.newProxyInstance(KafkaRestContext.class.getClassLoader(), new
             Class[]{KafkaRestContext
-            .class}, contextInvocationHandler);
+                        .class}, contextInvocationHandler);
+
     config.register(RootResource.class);
     config.register(new BrokersResource(context));
     config.register(new TopicsResource(context));
