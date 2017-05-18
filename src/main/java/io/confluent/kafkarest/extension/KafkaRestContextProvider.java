@@ -94,7 +94,7 @@ public class KafkaRestContextProvider {
     }
   }
 
-  private static KafkaRestContext getDefaultContext() {
+  public static KafkaRestContext getDefaultContext() {
     return context;
   }
 
